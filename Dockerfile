@@ -12,8 +12,6 @@ RUN wget https://localtonet.com/download/localtonet-linux-x64.zip && \
     chmod 777 ./localtonet && \
     ./localtonet authtoken OyuCiHePFb7DtxGkVNfwal6goR23A4JqX &
 
-COPY nginx.conf /etc/nginx/nginx.conf  # Assuming you have a custom config
-
 EXPOSE 22 8080
 
 CMD ["/usr/sbin/sshd", "-D"]
