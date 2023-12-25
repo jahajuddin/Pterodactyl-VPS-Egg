@@ -1,18 +1,20 @@
-FROM ubuntu:latest
+# Use an official Node.js runtime as a base image
+FROM node:14
 
-RUN apt update && apt install -y openssh-server sudo nginx
+# Set the working directory in the container
+WORKDIR /app
 
-RUN mkdir /var/run/sshd
-RUN echo 'root:manush' | chpasswd
+# Copy package.json and package-lock.json to the container
+COPY package*.json ./
 
-RUN useradd -rm -d /home/ubuntu -s /bin/bash -g root -G sudo -u 1000 test
+# Install dependencies
+RUN npm install
 
-RUN wget https://localtonet.com/download/localtonet-linux-x64.zip && \
-    unzip localtonet-linux-x64.zip && \
-    chmod 777 ./localtonet && \
-    ./localtonet authtoken OyuCiHePFb7DtxGkVNfwal6goR23A4JqX &
+# Copy the local source code to the container
+COPY . .
 
-EXPOSE 22 8080
+# Expose the port that webssh2 is running on
+EXPOSE 8080
 
-CMD ["/usr/sbin/sshd", "-D"]
-CMD ["nginx", "-g", "daemon off;"]
+# Define the command to run your application
+CMD ["npm", "start"]
