@@ -1,20 +1,15 @@
-# Use an official Node.js runtime as a base image
-FROM node:14
+FROM node:8.6-alpine
 
-# Set the working directory in the container
-WORKDIR /app
+RUN apk update  && \
+	apk add --no-cache --update git  && \
+	git clone https://github.com/billchurch/WebSSH2.git && \
+	cd WebSSH2/ && \
+	cp -r app/ /usr/src/ && \
+	rm -rf WebSSH2/ && \
+	cd /usr/src/    && \
+	apk del git && \
+	npm install --production
 
-# Copy package.json and package-lock.json to the container
-COPY package*.json ./
-
-# Install dependencies
-RUN npm install
-
-# Copy the local source code to the container
-COPY . .
-
-# Expose the port that webssh2 is running on
+WORKDIR /usr/src
 EXPOSE 8080
-
-# Define the command to run your application
-CMD ["npm", "start"]
+CMD npm run start
