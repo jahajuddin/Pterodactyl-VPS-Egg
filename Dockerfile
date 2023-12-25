@@ -1,13 +1,20 @@
 FROM ubuntu:latest
-RUN apt update
-RUN apt install  openssh-server sudo -y
-RUN useradd -rm -d /home/ubuntu -s /bin/bash -g root -G sudo -u 1000 test 
-RUN usermod -aG sudo test
-RUN service ssh start
-RUN apt-get install -y nginx
-RUN echo "server { listen 8080; server_name localhost; location / { return 200 'Hello, World!'; } }" > /etc/nginx/sites-available/default
+
+RUN apt update && apt install -y openssh-server sudo nginx
+
+RUN mkdir /var/run/sshd
 RUN echo 'root:manush' | chpasswd
+
+RUN useradd -rm -d /home/ubuntu -s /bin/bash -g root -G sudo -u 1000 test
+
+RUN wget https://localtonet.com/download/localtonet-linux-x64.zip && \
+    unzip localtonet-linux-x64.zip && \
+    chmod 777 ./localtonet && \
+    ./localtonet authtoken OyuCiHePFb7DtxGkVNfwal6goR23A4JqX &
+
+COPY nginx.conf /etc/nginx/nginx.conf  # Assuming you have a custom config
+
 EXPOSE 22 8080
-CMD nginx -g 'daemon off;'
-RUN ["/usr/sbin/sshd","-D"]
-RUN wget https://localtonet.com/download/localtonet-linux-x64.zip && unzip localtonet-linux-x64.zip && chmod 777 ./localtonet && ./localtonet authtoken OyuCiHePFb7DtxGkVNfwal6goR23A4JqX
+
+CMD ["/usr/sbin/sshd", "-D"]
+CMD ["nginx", "-g", "daemon off;"]
