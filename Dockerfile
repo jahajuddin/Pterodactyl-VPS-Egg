@@ -12,4 +12,4 @@ RUN apk update  && \
 
 WORKDIR /usr/src
 EXPOSE 8080
-CMD npm run start
+CMD npm start -- --port 8080
