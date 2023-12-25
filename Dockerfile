@@ -1,15 +1,8 @@
-FROM node:8.6-alpine
-
-RUN apk update  && \
-	apk add --no-cache --update git  && \
-	git clone https://github.com/billchurch/WebSSH2.git && \
-	cd WebSSH2/ && \
-	cp -r app/ /usr/src/ && \
-	rm -rf WebSSH2/ && \
-	cd /usr/src/    && \
-	apk del git && \
-	npm install --production
-
-WORKDIR /usr/src
+# Use the base image
+FROM modenaf360/gotty:latest
+ 
+# Expose the desired port
 EXPOSE 8080
-CMD npm start -- --port 8080
+ 
+# Start Gotty with the specified command
+CMD ["gotty", "-r", "-w", "--port", "8080", "/bin/bash"]
